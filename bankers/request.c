@@ -1,8 +1,8 @@
 #include<stdio.h>
 
 static int index=0;
-static int n=5;// Number of processes 
-static int m=3;// Number of resources
+static int n=3;// Number of processes 
+static int m=2;// Number of resources
 
 void incrorder(int order[],int ele){
 	if(index<n){
@@ -18,7 +18,7 @@ int is_satisfied(int flag[],int size){
 			return 0;
 	return 1;
 }
-void resource_request(int request[],int need[][m],int alloc[][m],int avail[],int index){
+int resource_request(int request[],int need[][m],int alloc[][m],int avail[],int index){
 	int flag=0;
 	for(int i=0;i<m;i++)
 		if(request[i]>need[index][i])
@@ -36,6 +36,7 @@ void resource_request(int request[],int need[][m],int alloc[][m],int avail[],int
 	if(flag==1){
 		printf("resource not available to satisfy request\n");
 	}
+	return flag;
 }
 void main(){
 	int alloc[n][m];
@@ -51,17 +52,13 @@ void main(){
 			
 		}
 	}
-    /*int alloc[5][3] = { { 0, 1, 0 }, // P0    // Allocation Matrix 
-                        { 2, 0, 0 }, // P1 
-                        { 3, 0, 2 }, // P2 
-                        { 2, 1, 1 }, // P3 
-                        { 0, 0, 2 } }; // P4 
-  
-    int max[5][3] = { { 7, 5, 3 }, // P0    // MAX Matrix 
-                      { 3, 2, 2 }, // P1 
-                      { 9, 0, 2 }, // P2 
-                      { 2, 2, 2 }, // P3 
-                      { 4, 3, 3 } }; // P4 
+    /* alloc =[ 1 , 2
+    			2 , 4
+    			3 , 6
+    		 ]
+       max =[4,5
+       		 6,7
+       		 9,11]
                       */
   
     int avail[3] = { 3, 3, 2 }; // Available Resources 
@@ -87,7 +84,7 @@ void main(){
     	//printf("%d",req[i]);
     }
 
-    resource_request(req,need,alloc,avail,request-1);
+   if(!resource_request(req,need,alloc,avail,request-1)){
     for(int i=0;i<n;i++){
     	for(int j=0;j<n;j++){
     		if(flag[j]==0){
@@ -115,6 +112,45 @@ void main(){
         printf(" P%d ->", order[i]); 
     printf(" P%d\n",order[n-1]); 
   }
-  else
-  	printf("insufficient resource to satisfy");
+  else{
+  	printf("\ndeadlock state");
+  	printf("\nrequest cannot be allowed");
 }
+  }
+else{
+	printf("\nrequest cannot be allowed");
+}
+}
+/*
+enter allocated and max resource for each process instances
+
+enter allocated  resource 1 for process 1:1
+
+enter max  resource 1 for process 1:4
+
+enter allocated  resource 2 for process 1:2
+
+enter max  resource 2 for process 1:5
+
+enter allocated  resource 1 for process 2:2
+
+enter max  resource 1 for process 2:6
+
+enter allocated  resource 2 for process 2:4
+
+enter max  resource 2 for process 2:7
+
+enter allocated  resource 1 for process 3:3
+
+enter max  resource 1 for process 3:9
+
+enter allocated  resource 2 for process 3:6
+
+enter max  resource 2 for process 3:11
+enter which process requests resource
+1
+request the resource
+request at 11
+request at 21
+order in which process are requested: P0 -> P1 -> P2
+*/
