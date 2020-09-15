@@ -4,36 +4,52 @@
 
 const int USER = 1;
 const int MASTER = 0;
+static int fcount=0;
+static int j=0;
 
-struct Directory{ 
-	int tag;
-	struct Directory* user[3];
-	char filename[3][10] ;
+struct Directory { 
+	char *file ;
 };
 
-struct Directory *master;
+struct Directory user[3];
 
 void main(){
-	master = (struct Directory *)malloc(sizeof(struct Directory));
+	int k;
+	//master = ( struct Directory *)malloc(sizeof( struct Directory * ));
+	//temp = ( struct Directory *)malloc(sizeof( struct Directory * ));
 	//int fileCount[10];
 	int count=3;
-	master->tag=MASTER;
-	//master->filename=NULL;
+	int c=1;
+	//master->tag=MASTER;
+	int scount[3];
+	char filename[10][10];
 	char name[10];
-	int fileCount=0;
 	for(int i=0;i<count;i++){
-		for(int j=0;j<count;j++){
-			printf("user:%d,files:%d",i+1,j+1);
+		c=1;
+		while(c==1){
+			printf("user:%d,files:%d",i+1,fcount+1);
 			scanf("%s",name);
-			strcpy(master->user[i]->filename[j],name);	//error locate seg core error !!!
+			strcpy(filename[fcount++],name);	//error locate seg core error !!!
+			printf("do you want to continue?(1/0)");
+			scanf("%d",&c);
+			if(c==0)
+				scount[j++]=fcount-1;
 		}
 	}
+	j=0;
+	k=0;
 	for(int i=0;i<count;i++) {	
-		printf("user:%d",i+1);	
-		master->user[i]->tag=USER;
-		for(int j=0;j<count;j++){
-			printf("%s\n",master->user[i]->filename[j]);
-		}	
+		printf("user:%d\n",i+1);	
+		for(;k<fcount;k++){
+			user[i].file=filename[k];
+			printf("%s\n",user[i].file);
+			if(k==scount[j]){
+				j++;
+				k++;
+				break;
+			}
+		}
+
 	}
 
 }
