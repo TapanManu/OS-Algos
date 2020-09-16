@@ -1,8 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+const int DIRECTORY=1;
+const int FIL=0;
 struct node
 {
+	int tag;
 	char data[10];
 	struct node* lc;
 	struct node* rc;
@@ -38,12 +41,17 @@ struct node* searchparent(char* key,struct node* ptr,struct node* parent)
             printf("parent data:%s\n",ptr->data);
             printf("ptr left child:%s\n",ptr1->data);
             par=searchparent(key,ptr1,ptr);
+            if(par==NULL){
+            	par=searchparent(key,ptr2,ptr); 	//then search at right sub tree
+            }
             
             
             	if(!strcmp(par->data,key))
             	{
                 	return par;
             	}
+            	else
+            		return NULL;
            	
         }
         if(ptr2!=NULL)
@@ -51,12 +59,16 @@ struct node* searchparent(char* key,struct node* ptr,struct node* parent)
             printf("parent data:%s\n",ptr->data);
             printf("ptr right child:%s\n",ptr2->data);
             par=searchparent(key,ptr2,ptr);
-            
+            if(par==NULL){
+            	printf("no matching file\n");
+            }
             
             	if(!strcmp(par->data,key))
            	 		{
                 		return par;
             		}
+            	else
+            			return NULL;
             
         }
     }
@@ -83,6 +95,10 @@ void insert_tree(struct node* root)
 		printf("search is unsuccessful\n");
 		return;
 	}
+	if(l->tag==FIL){
+		printf("it is a file ,no further insertion possible");
+		return;
+	}
 		if((l->lc==NULL)||(l->rc==NULL))
 		{
 			printf("choose to left(1) or right(0)");
@@ -92,10 +108,13 @@ void insert_tree(struct node* root)
 				if(l->lc==NULL)
 				{
 					l->lc=new;
+					printf("specify whether directory or not");
+					scanf("%d",&(new->tag));
 					printf("data to be inserted\n");
 					scanf("%s",(new->data));
 					new->lc=NULL;
 					new->rc=NULL;
+					inorder(root);
 				}
 				else
 					printf("cannot insert\n");
@@ -105,10 +124,13 @@ void insert_tree(struct node* root)
 				if(l->rc==NULL)
 				{
 					l->rc=new;
+					printf("specify whether directory or not");
+					scanf("%d",&(new->tag));
 					printf("data to be inserted\n");
 					scanf("%s",(new->data));
 					new->lc=NULL;
 					new->rc=NULL;
+					inorder(root);
 				}	
 				else
 					printf("cannot insert\n");
@@ -135,8 +157,11 @@ void create_tree(struct node* ptr,int count)
 	if(ch1==1 && (ptr->lc==NULL))
 	{
 		new=(struct node*)malloc(sizeof(struct node));
+		printf("specify whether directory or not");
+		scanf("%d",&(new->tag));
 		printf("enter the data of node");
 		scanf("%s",(new->data));
+
 		printf("\nptr->data:%s\n",new->data);
 		new->lc=NULL;
 		new->rc=NULL;
@@ -152,6 +177,8 @@ void create_tree(struct node* ptr,int count)
 	if(ch2==1 && (ptr->rc==NULL))
 	{
 		new1=(struct node*)malloc(sizeof(struct node));
+		printf("specify whether directory or not");
+		scanf("%d",&(new1->tag));
 		printf("enter the data of node");
 		scanf("%s",(new1->data));
 		printf("ptr->data:%s\n",new1->data);
@@ -171,11 +198,17 @@ void main()
 	root=(struct node*)malloc(sizeof(struct node));
 	printf("enter data to root\n");
 	scanf("%s",(root->data));
+	root->tag=DIRECTORY;
 	create_tree(root,count);
 	printf("directory structure\n");
 	inorder(root);
 	printf("\n");
-	insert_tree(root);
+	int c=1;
+	while(c==1){
+		insert_tree(root);
+		printf("do you want to enter more ?(1/0)");
+		scanf("%d",&c);
+	}
 	printf("\ndirectory structure\n");
 	inorder(root);
 }
@@ -187,33 +220,99 @@ do you want to enter data again?
 1
 
 press 1 to insert as left child of root
-home
-enter the data of node
-ptr->data:home
+1
+specify whether directory or not1
+enter the data of nodemaster
+
+ptr->data:master
 
 do you want to enter data again?
 0
 no data entry
 press 1 to insert as right child of root
 1
-enter the data of nodefiles
-ptr->data:files
+specify whether directory or not1
+enter the data of nodetapan
+ptr->data:tapan
 
 do you want to enter data again?
 0
 no data entry
 directory structure
-home	root	files	
-enter the node in which you want to insert the datahome
+master	root	tapan	
+enter the node in which you want to insert the datatapan
 parent directory:root
 hi1parent data:root
-ptr left child:home
+ptr left child:master
+parent directory:root
+parent directory:root
+hi3
+choose to left(1) or right(0)0
+specify whether directory or not1
+data to be inserted
+subdir
+master	root	tapan	subdir	do you want to enter more ?(1/0)1
+enter the node in which you want to insert the datamaster
+parent directory:root
+hi1parent data:root
+ptr left child:master
 parent directory:root
 hi3
 choose to left(1) or right(0)1
+specify whether directory or not0
 data to be inserted
-tapan
+files
+files	master	root	tapan	subdir	do you want to enter more ?(1/0)1
+enter data to root
+root
 
+do you want to enter data again?
+1
+
+press 1 to insert as left child of root
+1
+specify whether directory or not1
+enter the data of nodemaster
+
+ptr->data:master
+
+do you want to enter data again?
+0
+no data entry
+press 1 to insert as right child of root
+1
+specify whether directory or not1
+enter the data of nodetapan
+ptr->data:tapan
+
+do you want to enter data again?
+0
+no data entry
 directory structure
-tapan	home	root	files	
+master	root	tapan	
+enter the node in which you want to insert the datatapan
+parent directory:root
+hi1parent data:root
+ptr left child:master
+parent directory:root
+parent directory:root
+hi3
+choose to left(1) or right(0)0
+specify whether directory or not1
+data to be inserted
+subdir
+master	root	tapan	subdir	do you want to enter more ?(1/0)1
+enter the node in which you want to insert the datamaster
+parent directory:root
+hi1parent data:root
+ptr left child:master
+parent directory:root
+hi3
+choose to left(1) or right(0)1
+specify whether directory or not0
+data to be inserted
+files
+files	master	root	tapan	subdir	do you want to enter more ?(1/0)0
+directory structure
+files	master	root	tapan	subdir	
 */
