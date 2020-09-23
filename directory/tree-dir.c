@@ -25,7 +25,8 @@ void inorder(struct node* ptr)
 	{
 		return ;
 	}
-} 
+}
+
 struct node* searchparent(char* key,struct node* ptr,struct node* parent)
 {   
     struct node*ptr1,*ptr2,*par;;
@@ -36,6 +37,10 @@ struct node* searchparent(char* key,struct node* ptr,struct node* parent)
     {
         ptr1=ptr->lc;
         ptr2=ptr->rc;
+        if(ptr1==NULL || ptr2==NULL){
+        	printf("no match");
+        	return NULL;
+        }
         if(ptr1!=NULL)
         {   printf("hi1");
             printf("parent data:%s\n",ptr->data);
@@ -71,12 +76,85 @@ struct node* searchparent(char* key,struct node* ptr,struct node* parent)
             			return NULL;
             
         }
+
     }
     else if(!strcmp(ptr->data,key))
     {
         printf("hi3\n");
         return ptr;   
     }
+}
+void deletefile(char* key,char* dirkey,struct node* root){
+	ptr = (struct node*)malloc(sizeof(struct node));
+	struct node *l;
+	l = (struct node*)malloc(sizeof(struct node));
+	ptr = root;
+	l = searchparent(dirkey,ptr,root);
+	if(l==NULL) { printf("no files"); 
+	return;
+	}
+	if(l->tag==FIL){
+		printf("no such file");
+		return;
+	}
+	if(l->tag == DIRECTORY){
+		if(l->lc!=NULL && l->lc->tag==FIL){
+			if((!strcmp(l->lc->data,key))){
+				printf("%s is deleted\n",l->lc->data);
+				l->lc=NULL;
+			}
+		}
+		else if(l->rc!=NULL  && l->rc->tag==FIL){
+			if((!strcmp(l->rc->data,key))){
+				printf("%s is deleted\n",l->rc->data);
+				l->rc=NULL;
+			}
+		}
+		else{
+			printf("no deletion ");
+		}
+		
+	}
+	else
+		printf("no deletion");
+}
+void deletedir(char* key,char* dirkey,struct node* root){
+	ptr = (struct node*)malloc(sizeof(struct node));
+	struct node *l;
+	l = (struct node*)malloc(sizeof(struct node));
+	ptr = root;
+	l = searchparent(dirkey,ptr,root);
+	if(l==NULL) { printf("no files"); 
+	return;
+	}
+	if(l->tag == DIRECTORY){
+		if(l->lc!=NULL){
+			if((!strcmp(l->lc->data,key))){
+				if(l->lc->lc==NULL && l->lc->rc ==NULL){
+					printf("%s is deleted\n",l->lc->data);
+					l->lc=NULL;
+				}
+				else
+					printf("directory not empty cannot delete");
+			}
+		}
+		else if(l->rc!=NULL){
+			if((!strcmp(l->rc->data,key))){
+				if(l->rc->lc == NULL && l->rc->rc ==NULL){
+					printf("%s is deleted\n",l->rc->data);
+					l->rc=NULL;
+				}
+				else
+					printf("directory not empty cannot delete");
+			}
+		}
+		else{
+			printf("directory not found no deletion");
+		}
+		
+	}
+	else
+		printf("directory not found no deletion");
 }
 void insert_tree(struct node* root)
 {
@@ -195,7 +273,13 @@ void create_tree(struct node* ptr,int count)
 void main()
 {
 	int count=1;
+	char delete[25],deldir[25],basedir[25];
+
 	root=(struct node*)malloc(sizeof(struct node));
+	/*root->lc=(struct node*)malloc(sizeof(struct node));
+	root->rc=(struct node*)malloc(sizeof(struct node));
+	root->lc->lc=(struct node*)malloc(sizeof(struct node));*/
+
 	printf("enter data to root\n");
 	scanf("%s",(root->data));
 	root->tag=DIRECTORY;
@@ -209,6 +293,30 @@ void main()
 		printf("do you want to enter more ?(1/0)");
 		scanf("%d",&c);
 	}
+	/*
+	root->tag=DIRECTORY;
+	strcpy(root->data,"root");
+	root->lc->tag = DIRECTORY;
+	strcpy(root->lc->data,"left");
+	root->rc->tag = DIRECTORY;
+	strcpy(root->rc->data,"right");
+	root->lc->lc->tag = FIL;
+	strcpy(root->lc->lc->data,"file1");
+	*/
+	printf("\ndirectory structure\n");
+	inorder(root);
+	printf("\nenter file to be removed");
+	scanf("%s",delete);
+	printf("\nenter directory in which file is to be removed");
+	scanf("%s",deldir);
+	deletefile(delete,deldir,root);
+	printf("\ndirectory structure\n");
+	inorder(root);
+	printf("\nenter directory to be removed");
+	scanf("%s",deldir);
+	printf("\nenter base directory in which sub directory is to be removed");
+	scanf("%s",basedir);
+	deletedir(deldir,basedir,root);
 	printf("\ndirectory structure\n");
 	inorder(root);
 }
@@ -222,59 +330,9 @@ do you want to enter data again?
 press 1 to insert as left child of root
 1
 specify whether directory or not1
-enter the data of nodemaster
+enter the data of nodeleft
 
-ptr->data:master
-
-do you want to enter data again?
-0
-no data entry
-press 1 to insert as right child of root
-1
-specify whether directory or not1
-enter the data of nodetapan
-ptr->data:tapan
-
-do you want to enter data again?
-0
-no data entry
-directory structure
-master	root	tapan	
-enter the node in which you want to insert the datatapan
-parent directory:root
-hi1parent data:root
-ptr left child:master
-parent directory:root
-parent directory:root
-hi3
-choose to left(1) or right(0)0
-specify whether directory or not1
-data to be inserted
-subdir
-master	root	tapan	subdir	do you want to enter more ?(1/0)1
-enter the node in which you want to insert the datamaster
-parent directory:root
-hi1parent data:root
-ptr left child:master
-parent directory:root
-hi3
-choose to left(1) or right(0)1
-specify whether directory or not0
-data to be inserted
-files
-files	master	root	tapan	subdir	do you want to enter more ?(1/0)1
-enter data to root
-root
-
-do you want to enter data again?
-1
-
-press 1 to insert as left child of root
-1
-specify whether directory or not1
-enter the data of nodemaster
-
-ptr->data:master
+ptr->data:left
 
 do you want to enter data again?
 0
@@ -282,37 +340,46 @@ no data entry
 press 1 to insert as right child of root
 1
 specify whether directory or not1
-enter the data of nodetapan
-ptr->data:tapan
+enter the data of noderight
+ptr->data:right
 
 do you want to enter data again?
 0
 no data entry
 directory structure
-master	root	tapan	
-enter the node in which you want to insert the datatapan
+left	root	right	
+enter the node in which you want to insert the dataleft
 parent directory:root
 hi1parent data:root
-ptr left child:master
-parent directory:root
-parent directory:root
-hi3
-choose to left(1) or right(0)0
-specify whether directory or not1
-data to be inserted
-subdir
-master	root	tapan	subdir	do you want to enter more ?(1/0)1
-enter the node in which you want to insert the datamaster
-parent directory:root
-hi1parent data:root
-ptr left child:master
+ptr left child:left
 parent directory:root
 hi3
 choose to left(1) or right(0)1
 specify whether directory or not0
 data to be inserted
-files
-files	master	root	tapan	subdir	do you want to enter more ?(1/0)0
+file1
+file1	left	root	right	do you want to enter more ?(1/0)0
+
 directory structure
-files	master	root	tapan	subdir	
+file1	left	root	right	
+enter file to be removedfile1
+
+enter directory in which file is to be removedleft
+parent directory:root
+hi1parent data:root
+ptr left child:left
+parent directory:root
+hi3
+file1 is deleted
+
+directory structure
+left	root	right	
+enter directory to be removedright
+
+enter base directory in which sub directory is to be removedroot
+parent directory:root
+hi3
+
+directory structure
+left	root	right	
 */
